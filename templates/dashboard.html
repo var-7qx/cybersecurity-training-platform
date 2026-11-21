@@ -1,10 +1,63 @@
 {% extends "base.html" %}
+{% block title %}Dashboard · CYBER_WRAITH{% endblock %}
 {% block content %}
-<div class="page-head"><div class="eyebrow">PERSONAL DASHBOARD</div><h1>Hello, {{ user.display_name }}.</h1><p class="muted">Your collections, all in one place.</p></div>
-<div class="stats">
-  <div><span>ACCOUNT</span><strong>{{ user.username }}</strong></div>
-  <div><span>ROLE</span><strong>{{ user.role|title }}</strong></div>
-  <div><span>ENVIRONMENT</span><strong>Local Lab</strong></div>
+<div class="page-head">
+  <div class="eyebrow">OPERATIONAL DASHBOARD</div>
+  <h1>Hello, {{ user.display_name }}.</h1>
+  <p class="muted">Welcome to your CYBER_WRAITH training workspace. Master the Art of Hack &amp; Defense.</p>
 </div>
-<a class="button" href="{{ url_for('collections') }}">Browse collections <b>→</b></a>
+
+<div class="stats">
+  <div><span>OPERATOR HANDLE</span><strong>{{ user.username }}</strong></div>
+  <div><span>ASSIGNED ROLE</span><strong><span class="badge badge-{{ user.role }}">{{ user.role|title }}</span></strong></div>
+  <div><span>ENVIRONMENT</span><strong>Local Lab (127.0.0.1)</strong></div>
+  <div><span>TELEMETRY STREAM</span><strong style="color: var(--accent);">Active &amp; Recording</strong></div>
+</div>
+
+<h2>Workspace Navigation</h2>
+<section class="tiles">
+  <article class="tile-card">
+    <div class="tile-icon">📂</div>
+    <h3>Personal Collections</h3>
+    <p>Access your owner-scoped records and training collections.</p>
+    <div style="margin-top: 18px;">
+      <a class="button secondary" href="{{ url_for('collections') }}">Browse Collections <b>→</b></a>
+    </div>
+  </article>
+  {% if user.role == 'admin' %}
+  <article class="tile-card">
+    <div class="tile-icon">📡</div>
+    <h3>SOC Telemetry Console</h3>
+    <p>Inspect real-time forensic socket events, login attempts, and scanner probes.</p>
+    <div style="margin-top: 18px;">
+      <a class="button" href="{{ url_for('soc_telemetry') }}">Open SOC Stream <b>→</b></a>
+    </div>
+  </article>
+  <article class="tile-card">
+    <div class="tile-icon">⚙️</div>
+    <h3>Administrative Control</h3>
+    <p>Manage synthetic lab accounts, review user roles, and inspect recent system audits.</p>
+    <div style="margin-top: 18px;">
+      <a class="button secondary" href="{{ url_for('admin') }}">Admin Control Room <b>→</b></a>
+    </div>
+  </article>
+  {% else %}
+  <article class="tile-card">
+    <div class="tile-icon">🎯</div>
+    <h3>Active Lab Tracks</h3>
+    <p>Explore Web Application Security and Defender Mode tracks.</p>
+    <div style="margin-top: 18px;">
+      <a class="button secondary" href="{{ url_for('collections') }}">View Modules <b>→</b></a>
+    </div>
+  </article>
+  <article class="tile-card">
+    <div class="tile-icon">🛡️</div>
+    <h3>Defense &amp; Hardening</h3>
+    <p>Learn parameterized SQL, output encoding, and access control fundamentals.</p>
+    <div style="margin-top: 18px;">
+      <span class="badge badge-user">Phase 1 Operational</span>
+    </div>
+  </article>
+  {% endif %}
+</section>
 {% endblock %}

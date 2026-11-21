@@ -1,28 +1,80 @@
 {% extends "base.html" %}
+{% block title %}Admin Console · CYBER_WRAITH{% endblock %}
 {% block content %}
 <div class="page-head">
   <div class="eyebrow">CONTROL ROOM</div>
-  <h1>Admin overview.</h1>
-  <p class="muted">Synthetic lab accounts and recent security telemetry.</p>
-  <div style="margin-top: 18px;">
+  <h1>Admin Overview.</h1>
+  <p class="muted">Platform operator console. Synthetic lab accounts and recent security telemetry stream.</p>
+  <div style="margin-top: 20px;">
     <a class="button" href="{{ url_for('soc_telemetry') }}">Open SOC Telemetry <b>→</b></a>
   </div>
 </div>
-<h2>Test accounts</h2>
-<div class="table-wrap"><table><tr><th>ID</th><th>Username</th><th>Display name</th><th>Role</th></tr>
-{% for u in users %}<tr><td>{{ u.id }}</td><td>{{ u.username }}</td><td>{{ u.display_name }}</td><td>{{ u.role }}</td></tr>{% endfor %}
-</table></div>
-<h2>Recent audit events</h2>
-<div class="table-wrap"><table><tr><th>Time (UTC)</th><th>Event</th><th>Username</th><th>Source IP</th><th>Method</th><th>Path</th><th>Status</th><th>Detail</th></tr>
-{% for log in logs %}<tr>
-  <td>{{ log.created_at }}</td>
-  <td>{{ log.event }}</td>
-  <td>{{ log.username or '—' }}</td>
-  <td><code>{{ log.remote_addr or '—' }}</code></td>
-  <td><code>{{ log.http_method or '—' }}</code></td>
-  <td>{{ log.path or '—' }}</td>
-  <td>{{ log.status_code if log.status_code is not none else '—' }}</td>
-  <td>{{ log.detail }}</td>
-</tr>{% endfor %}
-</table></div>
+
+<h2>Synthetic Accounts Registry</h2>
+<div class="table-wrap">
+  <table>
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Username</th>
+        <th>Display Name</th>
+        <th>Role</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for u in users %}
+      <tr>
+        <td>#{{ u.id }}</td>
+        <td><code>{{ u.username }}</code></td>
+        <td>{{ u.display_name }}</td>
+        <td><span class="badge badge-{{ u.role }}">{{ u.role|title }}</span></td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+<h2>Recent Audit Events</h2>
+<div class="table-wrap">
+  <table>
+    <thead>
+      <tr>
+        <th>Time (UTC)</th>
+        <th>Event</th>
+        <th>Username</th>
+        <th>Source IP</th>
+        <th>Method</th>
+        <th>Path</th>
+        <th>Status</th>
+        <th>Detail</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for log in logs %}
+      <tr>
+        <td style="font-size: 11.5px; color: var(--text-dim);">{{ log.created_at }}</td>
+        <td>
+          {% if log.event == 'login_failure' %}
+            <span style="color: var(--danger); font-weight: 700;">{{ log.event }}</span>
+          {% elif log.event == 'unauthorized_admin_access' %}
+            <span style="color: var(--warning); font-weight: 700;">{{ log.event }}</span>
+          {% elif log.event == 'login_success' %}
+            <span style="color: var(--accent); font-weight: 700;">{{ log.event }}</span>
+          {% elif log.event == 'not_found' %}
+            <span style="color: var(--cyan); font-weight: 600;">{{ log.event }}</span>
+          {% else %}
+            <span>{{ log.event }}</span>
+          {% endif %}
+        </td>
+        <td>{{ log.username or '—' }}</td>
+        <td><code>{{ log.remote_addr or '—' }}</code></td>
+        <td><code>{{ log.http_method or '—' }}</code></td>
+        <td style="max-width: 180px; overflow: hidden; text-overflow: ellipsis;">{{ log.path or '—' }}</td>
+        <td>{{ log.status_code if log.status_code is not none else '—' }}</td>
+        <td style="max-width: 200px; overflow: hidden; text-overflow: ellipsis;">{{ log.detail }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
 {% endblock %}

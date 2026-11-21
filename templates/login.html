@@ -1,19 +1,21 @@
 {% extends "base.html" %}
-{% block title %}Sign in · MY COLLECTIONS{% endblock %}
+{% block title %}Sign in · CYBER_WRAITH{% endblock %}
 {% block content %}
 <div class="login-wrap">
   <section class="login-card">
-    <div class="eyebrow">MEMBER ACCESS</div>
-    <h1>Welcome back.</h1>
-    <p class="muted">Sign in to open your personal collection.</p>
+    <div class="eyebrow">AUTHENTICATION GATEWAY</div>
+    <h1>Security Access.</h1>
+    <p class="muted">Enter credentials to access the CYBER_WRAITH training range.</p>
     <form method="post" autocomplete="on">
       <label>Username</label>
-      <input name="username" required maxlength="80" autocomplete="username" placeholder="Enter username">
+      <input name="username" required maxlength="80" autocomplete="username" placeholder="Enter assigned username" autofocus>
       <label>Password</label>
       <input name="password" type="password" required autocomplete="current-password" placeholder="Enter password">
-      <button class="button full" type="submit">Sign in <b>→</b></button>
+      <button class="button full" type="submit">Authenticate &amp; Launch <b>→</b></button>
     </form>
-    <p class="small muted">Local cybersecurity training environment. Use only the lab accounts.</p>
+    <p class="small muted" style="margin-top: 24px; text-align: center;">
+      Local cybersecurity training environment. Authorized synthetic accounts only.
+    </p>
   </section>
 </div>
 {% endblock %}

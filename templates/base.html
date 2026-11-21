@@ -3,14 +3,24 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>{% block title %}MY COLLECTIONS{% endblock %}</title>
+  <title>{% block title %}CYBER_WRAITH · Master the Art of Hack &amp; Defense{% endblock %}</title>
   <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
 <header class="topbar">
-  <a class="brand" href="{{ url_for('index') }}">MY <span>COLLECTIONS</span></a>
+  <a class="brand-wrap" href="{{ url_for('index') }}">
+    <div class="brand-icon">CW</div>
+    <div class="brand-text">
+      <div class="brand">CYBER_<span>WRAITH</span></div>
+      <div class="brand-tagline">Master the Art of Hack &amp; Defense</div>
+    </div>
+  </a>
   <nav>
     {% if current_user %}
+      <span class="user-pill">
+        <span class="user-pill-dot"></span>
+        {{ current_user.username }} ({{ current_user.role|title }})
+      </span>
       <a href="{{ url_for('dashboard') }}">Dashboard</a>
       <a href="{{ url_for('collections') }}">Collections</a>
       {% if current_user.role == 'admin' %}
@@ -19,7 +29,8 @@
       {% endif %}
       <a href="{{ url_for('logout') }}">Logout</a>
     {% else %}
-      <a href="{{ url_for('login') }}">Login</a>
+      <a href="{{ url_for('index') }}">Overview</a>
+      <a href="{{ url_for('login') }}">Access Console</a>
     {% endif %}
   </nav>
 </header>
@@ -31,6 +42,9 @@
   {% endwith %}
   {% block content %}{% endblock %}
 </main>
-<footer>MY COLLECTIONS <span>·</span> Personal space / Local security training</footer>
+<footer>
+  <div class="brand-foot">CYBER_<span>WRAITH</span> · Master the Art of Hack &amp; Defense.</div>
+  <div>Browser-Based Cybersecurity Training Platform · Local Range</div>
+</footer>
 </body>
 </html>

@@ -1,11 +1,21 @@
 {% extends "base.html" %}
+{% block title %}Collections · CYBER_WRAITH{% endblock %}
 {% block content %}
-<div class="page-head"><div class="eyebrow">YOUR LIBRARY</div><h1>Collections.</h1><p class="muted">Only records owned by your account are shown.</p></div>
-<div class="collection-grid">
+<div class="page-head">
+  <div class="eyebrow">WORKSPACE LIBRARY</div>
+  <h1>Personal Collections.</h1>
+  <p class="muted">Owner-scoped practice library records. Only records owned by your account are accessible.</p>
+</div>
+
+<div class="tiles">
 {% for item in items %}
-  <article class="collection-card"><div class="eyebrow">{{ item.category }}</div><h3>{{ item.title }}</h3><p>{{ item.description }}</p></article>
+  <article class="collection-card">
+    <div class="eyebrow">{{ item.category }}</div>
+    <h3>{{ item.title }}</h3>
+    <p>{{ item.description }}</p>
+  </article>
 {% else %}
-  <p class="muted">No collections yet.</p>
+  <p class="muted">No collections yet assigned to this account.</p>
 {% endfor %}
 </div>
 {% endblock %}

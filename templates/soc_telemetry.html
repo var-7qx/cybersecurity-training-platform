@@ -1,27 +1,68 @@
 {% extends "base.html" %}
-{% block title %}SOC Telemetry · MY COLLECTIONS{% endblock %}
+{% block title %}SOC Telemetry · CYBER_WRAITH{% endblock %}
 {% block content %}
 <div class="page-head">
-  <div class="eyebrow">SOC MONITORING &amp; OBSERVABILITY · PHASE 1</div>
-  <h1>Security Telemetry.</h1>
-  <p class="muted">Live application telemetry stream captured at the socket layer. Loopback-only (127.0.0.1).</p>
+  <div class="eyebrow">SOC MONITORING &amp; OBSERVABILITY · PHASE A</div>
+  <h1>Security Telemetry Stream.</h1>
+  <p class="muted">Centralized SOC event ingestion across CYBER_WRAITH platform and spoke applications. Authenticated via HMAC-SHA256.</p>
 </div>
 
-<div class="stats" style="grid-template-columns: repeat(5, 1fr);">
+<div class="stats" style="grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));">
   <div><span>TOTAL EVENTS</span><strong>{{ stats.total_events }}</strong></div>
   <div><span>UNIQUE IPS</span><strong>{{ stats.unique_ips }}</strong></div>
-  <div><span>FAILED LOGINS</span><strong style="color: #ff9d9d;">{{ stats.failed_logins }}</strong></div>
-  <div><span>ADMIN PROBES</span><strong style="color: #ffcf70;">{{ stats.unauthorized_probes }}</strong></div>
-  <div><span>404 SCANS</span><strong style="color: #6bd6f3;">{{ stats.not_found_scans }}</strong></div>
+  <div><span>HIGH/CRITICAL</span><strong style="color: var(--danger);">{{ stats.high_critical }}</strong></div>
+  <div><span>FAILED LOGINS</span><strong style="color: var(--warning);">{{ stats.failed_logins }}</strong></div>
+  <div><span>ADMIN PROBES</span><strong style="color: var(--cyan);">{{ stats.unauthorized_probes }}</strong></div>
+  <div><span>404 SCANS</span><strong style="color: var(--accent);">{{ stats.not_found_scans }}</strong></div>
 </div>
 
-<div style="display: flex; gap: 10px; margin: 20px 0; flex-wrap: wrap; align-items: center;">
-  <span class="muted" style="font-size: 12px; font-weight: 700; letter-spacing: 1px;">FILTER:</span>
-  <a class="button" style="padding: 6px 12px; font-size: 11px; {{ 'background: var(--text); color: var(--bg);' if not current_filter else 'background: #1c2430; color: var(--text);' }}" href="{{ url_for('soc_telemetry') }}">All Events</a>
-  <a class="button" style="padding: 6px 12px; font-size: 11px; {{ 'background: var(--text); color: var(--bg);' if current_filter == 'login_failure' else 'background: #1c2430; color: var(--text);' }}" href="{{ url_for('soc_telemetry', event='login_failure') }}">Login Failures</a>
-  <a class="button" style="padding: 6px 12px; font-size: 11px; {{ 'background: var(--text); color: var(--bg);' if current_filter == 'unauthorized_admin_access' else 'background: #1c2430; color: var(--text);' }}" href="{{ url_for('soc_telemetry', event='unauthorized_admin_access') }}">Admin Probes</a>
-  <a class="button" style="padding: 6px 12px; font-size: 11px; {{ 'background: var(--text); color: var(--bg);' if current_filter == 'not_found' else 'background: #1c2430; color: var(--text);' }}" href="{{ url_for('soc_telemetry', event='not_found') }}">404 Scans</a>
-  <a class="button" style="padding: 6px 12px; font-size: 11px; {{ 'background: var(--text); color: var(--bg);' if current_filter == 'login_success' else 'background: #1c2430; color: var(--text);' }}" href="{{ url_for('soc_telemetry', event='login_success') }}">Logins</a>
+<!-- Application Filters -->
+<div style="display: flex; gap: 8px; margin: 24px 0 10px; flex-wrap: wrap; align-items: center;">
+  <span class="muted" style="font-size: 11px; font-weight: 700; letter-spacing: 1.2px; text-transform: uppercase;">APPLICATION:</span>
+  <a class="button secondary" style="padding: 5px 12px; font-size: 11px; {{ 'background: var(--accent); color: #07090d;' if not current_app else '' }}"
+    href="{{ url_for('soc_telemetry', app='', event=current_filter, severity=current_severity) }}">All Apps</a>
+  <a class="button secondary" style="padding: 5px 12px; font-size: 11px; {{ 'background: var(--accent); color: #07090d;' if current_app == 'cw_platform' else '' }}"
+    href="{{ url_for('soc_telemetry', app='cw_platform', event=current_filter, severity=current_severity) }}">CYBER_WRAITH (Platform)</a>
+  <a class="button secondary" style="padding: 5px 12px; font-size: 11px; {{ 'background: var(--accent); color: #07090d;' if current_app == 'cw_ecommerce' else '' }}"
+    href="{{ url_for('soc_telemetry', app='cw_ecommerce', event=current_filter, severity=current_severity) }}">Aura Market (E-Com)</a>
+  <a class="button secondary" style="padding: 5px 12px; font-size: 11px; {{ 'background: var(--accent); color: #07090d;' if current_app == 'cw_booking' else '' }}"
+    href="{{ url_for('soc_telemetry', app='cw_booking', event=current_filter, severity=current_severity) }}">Voyageur (Booking)</a>
+  <a class="button secondary" style="padding: 5px 12px; font-size: 11px; {{ 'background: var(--accent); color: #07090d;' if current_app == 'cw_banking' else '' }}"
+    href="{{ url_for('soc_telemetry', app='cw_banking', event=current_filter, severity=current_severity) }}">Apex Horizon (Bank)</a>
+  <a class="button secondary" style="padding: 5px 12px; font-size: 11px; {{ 'background: var(--accent); color: #07090d;' if current_app == 'cw_social' else '' }}"
+    href="{{ url_for('soc_telemetry', app='cw_social', event=current_filter, severity=current_severity) }}">PulseStream (Social)</a>
+</div>
+
+<!-- Severity Filters -->
+<div style="display: flex; gap: 8px; margin: 10px 0 10px; flex-wrap: wrap; align-items: center;">
+  <span class="muted" style="font-size: 11px; font-weight: 700; letter-spacing: 1.2px; text-transform: uppercase;">SEVERITY:</span>
+  <a class="button secondary" style="padding: 5px 12px; font-size: 11px; {{ 'background: var(--accent); color: #07090d;' if not current_severity else '' }}"
+    href="{{ url_for('soc_telemetry', severity='', app=current_app, event=current_filter) }}">All Severities</a>
+  <a class="button secondary" style="padding: 5px 12px; font-size: 11px; {{ 'background: var(--danger); color: #fff;' if current_severity == 'CRITICAL' else '' }}"
+    href="{{ url_for('soc_telemetry', severity='CRITICAL', app=current_app, event=current_filter) }}">CRITICAL</a>
+  <a class="button secondary" style="padding: 5px 12px; font-size: 11px; {{ 'background: #ff7832; color: #fff;' if current_severity == 'HIGH' else '' }}"
+    href="{{ url_for('soc_telemetry', severity='HIGH', app=current_app, event=current_filter) }}">HIGH</a>
+  <a class="button secondary" style="padding: 5px 12px; font-size: 11px; {{ 'background: var(--warning); color: #07090d;' if current_severity == 'MEDIUM' else '' }}"
+    href="{{ url_for('soc_telemetry', severity='MEDIUM', app=current_app, event=current_filter) }}">MEDIUM</a>
+  <a class="button secondary" style="padding: 5px 12px; font-size: 11px; {{ 'background: var(--cyan); color: #07090d;' if current_severity == 'LOW' else '' }}"
+    href="{{ url_for('soc_telemetry', severity='LOW', app=current_app, event=current_filter) }}">LOW</a>
+  <a class="button secondary" style="padding: 5px 12px; font-size: 11px; {{ 'background: var(--line-strong); color: #fff;' if current_severity == 'INFO' else '' }}"
+    href="{{ url_for('soc_telemetry', severity='INFO', app=current_app, event=current_filter) }}">INFO</a>
+</div>
+
+<!-- Event Filters -->
+<div style="display: flex; gap: 8px; margin: 10px 0 20px; flex-wrap: wrap; align-items: center;">
+  <span class="muted" style="font-size: 11px; font-weight: 700; letter-spacing: 1.2px; text-transform: uppercase;">EVENT TYPE:</span>
+  <a class="button secondary" style="padding: 5px 12px; font-size: 11px; {{ 'background: var(--accent); color: #07090d;' if not current_filter else '' }}"
+    href="{{ url_for('soc_telemetry', event='', app=current_app, severity=current_severity) }}">All Events</a>
+  <a class="button secondary" style="padding: 5px 12px; font-size: 11px; {{ 'background: var(--accent); color: #07090d;' if current_filter == 'login_failure' else '' }}"
+    href="{{ url_for('soc_telemetry', event='login_failure', app=current_app, severity=current_severity) }}">Login Failures</a>
+  <a class="button secondary" style="padding: 5px 12px; font-size: 11px; {{ 'background: var(--accent); color: #07090d;' if current_filter == 'unauthorized_admin_access' else '' }}"
+    href="{{ url_for('soc_telemetry', event='unauthorized_admin_access', app=current_app, severity=current_severity) }}">Admin Probes</a>
+  <a class="button secondary" style="padding: 5px 12px; font-size: 11px; {{ 'background: var(--accent); color: #07090d;' if current_filter == 'not_found' else '' }}"
+    href="{{ url_for('soc_telemetry', event='not_found', app=current_app, severity=current_severity) }}">404 Scans</a>
+  <a class="button secondary" style="padding: 5px 12px; font-size: 11px; {{ 'background: var(--accent); color: #07090d;' if current_filter == 'login_success' else '' }}"
+    href="{{ url_for('soc_telemetry', event='login_success', app=current_app, severity=current_severity) }}">Logins</a>
 </div>
 
 <h2>Audit Log Telemetry Stream</h2>
@@ -31,63 +72,93 @@
       <tr>
         <th>ID</th>
         <th>Time (UTC)</th>
+        <th>App</th>
+        <th>Severity</th>
         <th>Event</th>
         <th>Source IP</th>
         <th>Method</th>
         <th>Path</th>
         <th>Status</th>
         <th>Username</th>
-        <th>User-Agent</th>
         <th>Detail</th>
+        <th>Event ID</th>
       </tr>
     </thead>
     <tbody>
       {% for log in logs %}
       <tr>
         <td>#{{ log.id }}</td>
-        <td style="font-size: 11px; color: var(--muted);">{{ log.created_at }}</td>
+        <td style="font-size: 11.5px; color: var(--text-dim); white-space: nowrap;">{{ log.created_at }}</td>
+        <td>
+          {% if log.app_id == 'cw_platform' %}
+          <span class="badge" style="background: rgba(0, 223, 162, 0.1); border: 1px solid var(--accent-border); color: var(--accent);">Platform</span>
+          {% elif log.app_id == 'cw_ecommerce' %}
+          <span class="badge" style="background: rgba(0, 194, 255, 0.1); border: 1px solid var(--cyan-border); color: var(--cyan);">E-Com</span>
+          {% elif log.app_id == 'cw_booking' %}
+          <span class="badge" style="background: rgba(245, 158, 11, 0.1); border: 1px solid var(--warning-border); color: var(--warning);">Booking</span>
+          {% elif log.app_id == 'cw_banking' %}
+          <span class="badge" style="background: rgba(168, 85, 247, 0.1); border: 1px solid rgba(168, 85, 247, 0.3); color: #c084fc;">Banking</span>
+          {% elif log.app_id == 'cw_social' %}
+          <span class="badge" style="background: rgba(236, 72, 153, 0.1); border: 1px solid rgba(236, 72, 153, 0.3); color: #f472b6;">Social</span>
+          {% else %}
+          <span class="badge" style="background: var(--panel-alt); color: var(--text-muted);">{{ log.app_id or 'cw_platform' }}</span>
+          {% endif %}
+        </td>
+        <td>
+          {% set sev = log.severity or 'INFO' %}
+          {% if sev == 'CRITICAL' %}
+          <span class="badge" style="background: var(--danger-dim); border: 1px solid var(--danger-border); color: var(--danger);">CRITICAL</span>
+          {% elif sev == 'HIGH' %}
+          <span class="badge" style="background: rgba(255, 120, 50, 0.12); border: 1px solid rgba(255, 120, 50, 0.35); color: #ff7832;">HIGH</span>
+          {% elif sev == 'MEDIUM' %}
+          <span class="badge" style="background: var(--warning-dim); border: 1px solid var(--warning-border); color: var(--warning);">MEDIUM</span>
+          {% elif sev == 'LOW' %}
+          <span class="badge" style="background: var(--cyan-dim); border: 1px solid var(--cyan-border); color: var(--cyan);">LOW</span>
+          {% else %}
+          <span class="badge" style="background: rgba(255, 255, 255, 0.04); border: 1px solid var(--line-strong); color: var(--text-muted);">INFO</span>
+          {% endif %}
+        </td>
         <td>
           {% if log.event == 'login_failure' %}
-            <span style="color: #ff9d9d; font-weight: 700;">{{ log.event }}</span>
+          <span style="color: var(--danger); font-weight: 700;">{{ log.event }}</span>
           {% elif log.event == 'unauthorized_admin_access' %}
-            <span style="color: #ffcf70; font-weight: 700;">{{ log.event }}</span>
+          <span style="color: var(--warning); font-weight: 700;">{{ log.event }}</span>
           {% elif log.event == 'not_found' %}
-            <span style="color: #6bd6f3; font-weight: 600;">{{ log.event }}</span>
+          <span style="color: var(--cyan); font-weight: 600;">{{ log.event }}</span>
           {% elif log.event == 'login_success' %}
-            <span style="color: var(--accent); font-weight: 700;">{{ log.event }}</span>
+          <span style="color: var(--accent); font-weight: 700;">{{ log.event }}</span>
           {% else %}
-            <span>{{ log.event }}</span>
+          <span>{{ log.event }}</span>
           {% endif %}
         </td>
         <td><code>{{ log.remote_addr or '—' }}</code></td>
         <td><code>{{ log.http_method or '—' }}</code></td>
-        <td style="max-width: 180px; overflow: hidden; text-overflow: ellipsis;">{{ log.path or '—' }}</td>
+        <td style="max-width: 160px; overflow: hidden; text-overflow: ellipsis;">{{ log.path or '—' }}</td>
         <td>
           {% if log.status_code %}
-            {% if log.status_code >= 400 %}
-              <span style="color: #ff8585; font-weight: 700;">{{ log.status_code }}</span>
-            {% elif log.status_code >= 300 %}
-              <span style="color: #79c0ff; font-weight: 600;">{{ log.status_code }}</span>
-            {% else %}
-              <span style="color: var(--accent);">{{ log.status_code }}</span>
-            {% endif %}
+          {% if log.status_code >= 400 %}
+          <span style="color: var(--danger); font-weight: 700;">{{ log.status_code }}</span>
+          {% elif log.status_code >= 300 %}
+          <span style="color: var(--cyan); font-weight: 600;">{{ log.status_code }}</span>
           {% else %}
-            <span class="muted">—</span>
+          <span style="color: var(--accent); font-weight: 700;">{{ log.status_code }}</span>
+          {% endif %}
+          {% else %}
+          <span class="muted">—</span>
           {% endif %}
         </td>
         <td>{{ log.username or '—' }}</td>
-        <td style="max-width: 220px; overflow: hidden; text-overflow: ellipsis; font-size: 11px;" title="{{ log.user_agent or '' }}">
-          {{ log.user_agent or '—' }}
+        <td style="max-width: 180px; overflow: hidden; text-overflow: ellipsis;" title="{{ log.detail or '' }}">{{ log.detail or '—' }}</td>
+        <td style="font-size: 10.5px; font-family: var(--font-mono); color: var(--text-dim);" title="{{ log.event_id or '' }}">
+          {{ (log.event_id[:8] + '...') if log.event_id else '—' }}
         </td>
-        <td style="max-width: 200px; overflow: hidden; text-overflow: ellipsis;">{{ log.detail }}</td>
       </tr>
       {% else %}
       <tr>
-        <td colspan="10" class="muted" style="text-align: center; padding: 25px;">No telemetry events found matching the filter.</td>
+        <td colspan="12" class="muted" style="text-align: center; padding: 25px;">No telemetry events found matching the filter criteria.</td>
       </tr>
       {% endfor %}
     </tbody>
   </table>
 </div>
 {% endblock %}
-

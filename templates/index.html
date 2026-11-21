@@ -1,15 +1,47 @@
 {% extends "base.html" %}
+{% block title %}CYBER_WRAITH · Master the Art of Hack &amp; Defense{% endblock %}
 {% block content %}
 <section class="hero">
-  <div class="eyebrow">YOUR PERSONAL DIGITAL SPACE</div>
-  <h1>Everything you<br><span>keep close.</span></h1>
-  <p>A private home for your collections, ideas, and digital memories.</p>
-  <a class="button" href="{{ url_for('login') }}">Enter your space <b>→</b></a>
-  <div class="hero-note">LOCAL TRAINING INSTANCE <i>●</i> AUTHORIZED ACCESS ONLY</div>
+  <div class="eyebrow">BROWSER-BASED CYBER RANGE</div>
+  <h1>Master the Art of<br><span>Hack &amp; Defense.</span></h1>
+  <p>A realistic training platform combining offensive penetration testing, live SOC telemetry investigation, and
+    defensive code remediation.</p>
+  <div class="hero-actions">
+    {% if current_user %}
+    <a class="button" href="{{ url_for('dashboard') }}">Open Training Console <b>→</b></a>
+    <a class="button secondary" href="{{ url_for('collections') }}">View Workspace</a>
+    {% else %}
+    <a class="button" href="{{ url_for('login') }}">Launch Training Console <b>→</b></a>
+    <a class="button secondary" href="{{ url_for('login') }}">Member Authentication</a>
+    {% endif %}
+  </div>
+  <div class="hero-badge-strip">
+    <div class="hero-badge-item"><i>●</i> 20 SYNTHETIC TARGET ACCOUNTS</div>
+    <div class="hero-badge-item"><i>●</i> REAL SOCKET TELEMETRY</div>
+    <div class="hero-badge-item"><i>●</i> ZERO LOCAL SETUP REQUIRED</div>
+  </div>
 </section>
+
+<div class="eyebrow">TRAINING DISCIPLINES</div>
+<h2>Operational Modules &amp; Learning Tracks</h2>
 <section class="tiles">
-  <article><div class="tile-icon">▧</div><h3>Visual archive</h3><p>Keep images and inspiration organized.</p></article>
-  <article><div class="tile-icon">◫</div><h3>Personal library</h3><p>Collect notes, documents, and references.</p></article>
-  <article><div class="tile-icon">⌘</div><h3>Your space</h3><p>A simple dashboard for your own content.</p></article>
+  <article class="tile-card">
+    <div class="tile-icon">⚡</div>
+    <h3>Web Application Security</h3>
+    <p>Practice SQL Injection, Cross-Site Scripting (XSS), IDOR, CSRF, and authorization bypass against isolated
+      training targets.</p>
+  </article>
+  <article class="tile-card">
+    <div class="tile-icon">🛡️</div>
+    <h3>SOC &amp; Threat Telemetry</h3>
+    <p>Monitor real-time application security events, inspect socket-level audit logs, investigate authentication
+      attacks, and analyze probes.</p>
+  </article>
+  <article class="tile-card">
+    <div class="tile-icon">🔒</div>
+    <h3>Blue Team &amp; Defense</h3>
+    <p>Examine root causes of security flaws, compare vulnerable code with parameterized defenses, and verify
+      remediation in Defender Mode.</p>
+  </article>
 </section>
 {% endblock %}

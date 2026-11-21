@@ -1,2 +1,12 @@
 {% extends "base.html" %}
-{% block content %}<div class="page-head"><div class="eyebrow">REQUEST ERROR</div><h1>{{ code }}.</h1><p class="muted">{{ message }}</p><a class="button" href="{{ url_for('dashboard') if current_user else url_for('index') }}">Go back</a></div>{% endblock %}
+{% block title %}{{ code }} Error · CYBER_WRAITH{% endblock %}
+{% block content %}
+<div class="page-head">
+  <div class="eyebrow">SECURITY EXCEPTION · STATUS {{ code }}</div>
+  <h1>Request Terminated.</h1>
+  <p class="muted">{{ message }}</p>
+  <div style="margin-top: 24px;">
+    <a class="button" href="{{ url_for('dashboard') if current_user else url_for('index') }}">Return to Safety <b>→</b></a>
+  </div>
+</div>
+{% endblock %}

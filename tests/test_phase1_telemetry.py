@@ -12,6 +12,7 @@ from app import app, db, close_db, init_db
 
 class Phase1TelemetryTestCase(unittest.TestCase):
     def setUp(self):
+        self.orig_db_path = app.config.get("DATABASE_PATH")
         # Configure app for testing with an explicit, ephemeral test SECRET_KEY
         app.config["TESTING"] = True
         app.config["SECRET_KEY"] = f"test-only-ephemeral-key-{secrets.token_hex(16)}"
@@ -71,6 +72,7 @@ class Phase1TelemetryTestCase(unittest.TestCase):
         with app.app_context():
             close_db()
         shutil.rmtree(self.temp_dir, ignore_errors=True)
+        app.config["DATABASE_PATH"] = self.orig_db_path
 
     def _get_latest_audit_log(self):
         conn = sqlite3.connect(self.test_db_path)
