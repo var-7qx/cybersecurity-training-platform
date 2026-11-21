@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="page-head"><div class="eyebrow">PERSONAL DASHBOARD</div><h1>Hello, {{ user.display_name }}.</h1><p class="muted">Your collections, all in one place.</p></div>
+<div class="stats">
+  <div><span>ACCOUNT</span><strong>{{ user.username }}</strong></div>
+  <div><span>ROLE</span><strong>{{ user.role|title }}</strong></div>
+  <div><span>ENVIRONMENT</span><strong>Local Lab</strong></div>
+</div>
+<a class="button" href="{{ url_for('collections') }}">Browse collections <b>→</b></a>
+{% endblock %}

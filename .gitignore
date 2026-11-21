@@ -1,0 +1,41 @@
+# Python virtual environments
+venv/
+.venv/
+
+# Bytecode and caches
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Local databases and instance directory
+instance/
+*.db
+*.sqlite
+*.sqlite3
+*.bak
+
+# SQLite WAL, SHM and journal files
+*.db-wal
+*.db-shm
+*.db-journal
+*-wal
+*-shm
+*-journal
+
+# Environment variable files
+.env
+.env.*
+
+# Local credentials
+LAB_CREDENTIALS.txt
+
+# SSL / TLS certificates and private keys
+*.pem
+*.key
+*.crt
+
+# Operating System files
+.DS_Store
+Thumbs.db

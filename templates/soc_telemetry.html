@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+{% block title %}SOC Telemetry · MY COLLECTIONS{% endblock %}
+{% block content %}
+<div class="page-head">
+  <div class="eyebrow">SOC MONITORING &amp; OBSERVABILITY · PHASE 1</div>
+  <h1>Security Telemetry.</h1>
+  <p class="muted">Live application telemetry stream captured at the socket layer. Loopback-only (127.0.0.1).</p>
+</div>
+
+<div class="stats" style="grid-template-columns: repeat(5, 1fr);">
+  <div><span>TOTAL EVENTS</span><strong>{{ stats.total_events }}</strong></div>
+  <div><span>UNIQUE IPS</span><strong>{{ stats.unique_ips }}</strong></div>
+  <div><span>FAILED LOGINS</span><strong style="color: #ff9d9d;">{{ stats.failed_logins }}</strong></div>
+  <div><span>ADMIN PROBES</span><strong style="color: #ffcf70;">{{ stats.unauthorized_probes }}</strong></div>
+  <div><span>404 SCANS</span><strong style="color: #6bd6f3;">{{ stats.not_found_scans }}</strong></div>
+</div>
+
+<div style="display: flex; gap: 10px; margin: 20px 0; flex-wrap: wrap; align-items: center;">
+  <span class="muted" style="font-size: 12px; font-weight: 700; letter-spacing: 1px;">FILTER:</span>
+  <a class="button" style="padding: 6px 12px; font-size: 11px; {{ 'background: var(--text); color: var(--bg);' if not current_filter else 'background: #1c2430; color: var(--text);' }}" href="{{ url_for('soc_telemetry') }}">All Events</a>
+  <a class="button" style="padding: 6px 12px; font-size: 11px; {{ 'background: var(--text); color: var(--bg);' if current_filter == 'login_failure' else 'background: #1c2430; color: var(--text);' }}" href="{{ url_for('soc_telemetry', event='login_failure') }}">Login Failures</a>
+  <a class="button" style="padding: 6px 12px; font-size: 11px; {{ 'background: var(--text); color: var(--bg);' if current_filter == 'unauthorized_admin_access' else 'background: #1c2430; color: var(--text);' }}" href="{{ url_for('soc_telemetry', event='unauthorized_admin_access') }}">Admin Probes</a>
+  <a class="button" style="padding: 6px 12px; font-size: 11px; {{ 'background: var(--text); color: var(--bg);' if current_filter == 'not_found' else 'background: #1c2430; color: var(--text);' }}" href="{{ url_for('soc_telemetry', event='not_found') }}">404 Scans</a>
+  <a class="button" style="padding: 6px 12px; font-size: 11px; {{ 'background: var(--text); color: var(--bg);' if current_filter == 'login_success' else 'background: #1c2430; color: var(--text);' }}" href="{{ url_for('soc_telemetry', event='login_success') }}">Logins</a>
+</div>
+
+<h2>Audit Log Telemetry Stream</h2>
+<div class="table-wrap">
+  <table>
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Time (UTC)</th>
+        <th>Event</th>
+        <th>Source IP</th>
+        <th>Method</th>
+        <th>Path</th>
+        <th>Status</th>
+        <th>Username</th>
+        <th>User-Agent</th>
+        <th>Detail</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for log in logs %}
+      <tr>
+        <td>#{{ log.id }}</td>
+        <td style="font-size: 11px; color: var(--muted);">{{ log.created_at }}</td>
+        <td>
+          {% if log.event == 'login_failure' %}
+            <span style="color: #ff9d9d; font-weight: 700;">{{ log.event }}</span>
+          {% elif log.event == 'unauthorized_admin_access' %}
+            <span style="color: #ffcf70; font-weight: 700;">{{ log.event }}</span>
+          {% elif log.event == 'not_found' %}
+            <span style="color: #6bd6f3; font-weight: 600;">{{ log.event }}</span>
+          {% elif log.event == 'login_success' %}
+            <span style="color: var(--accent); font-weight: 700;">{{ log.event }}</span>
+          {% else %}
+            <span>{{ log.event }}</span>
+          {% endif %}
+        </td>
+        <td><code>{{ log.remote_addr or '—' }}</code></td>
+        <td><code>{{ log.http_method or '—' }}</code></td>
+        <td style="max-width: 180px; overflow: hidden; text-overflow: ellipsis;">{{ log.path or '—' }}</td>
+        <td>
+          {% if log.status_code %}
+            {% if log.status_code >= 400 %}
+              <span style="color: #ff8585; font-weight: 700;">{{ log.status_code }}</span>
+            {% elif log.status_code >= 300 %}
+              <span style="color: #79c0ff; font-weight: 600;">{{ log.status_code }}</span>
+            {% else %}
+              <span style="color: var(--accent);">{{ log.status_code }}</span>
+            {% endif %}
+          {% else %}
+            <span class="muted">—</span>
+          {% endif %}
+        </td>
+        <td>{{ log.username or '—' }}</td>
+        <td style="max-width: 220px; overflow: hidden; text-overflow: ellipsis; font-size: 11px;" title="{{ log.user_agent or '' }}">
+          {{ log.user_agent or '—' }}
+        </td>
+        <td style="max-width: 200px; overflow: hidden; text-overflow: ellipsis;">{{ log.detail }}</td>
+      </tr>
+      {% else %}
+      <tr>
+        <td colspan="10" class="muted" style="text-align: center; padding: 25px;">No telemetry events found matching the filter.</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}
+

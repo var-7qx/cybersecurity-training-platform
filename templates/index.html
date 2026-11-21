@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="hero">
+  <div class="eyebrow">YOUR PERSONAL DIGITAL SPACE</div>
+  <h1>Everything you<br><span>keep close.</span></h1>
+  <p>A private home for your collections, ideas, and digital memories.</p>
+  <a class="button" href="{{ url_for('login') }}">Enter your space <b>→</b></a>
+  <div class="hero-note">LOCAL TRAINING INSTANCE <i>●</i> AUTHORIZED ACCESS ONLY</div>
+</section>
+<section class="tiles">
+  <article><div class="tile-icon">▧</div><h3>Visual archive</h3><p>Keep images and inspiration organized.</p></article>
+  <article><div class="tile-icon">◫</div><h3>Personal library</h3><p>Collect notes, documents, and references.</p></article>
+  <article><div class="tile-icon">⌘</div><h3>Your space</h3><p>A simple dashboard for your own content.</p></article>
+</section>
+{% endblock %}

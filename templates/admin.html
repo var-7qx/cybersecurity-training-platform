@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="page-head">
+  <div class="eyebrow">CONTROL ROOM</div>
+  <h1>Admin overview.</h1>
+  <p class="muted">Synthetic lab accounts and recent security telemetry.</p>
+  <div style="margin-top: 18px;">
+    <a class="button" href="{{ url_for('soc_telemetry') }}">Open SOC Telemetry <b>→</b></a>
+  </div>
+</div>
+<h2>Test accounts</h2>
+<div class="table-wrap"><table><tr><th>ID</th><th>Username</th><th>Display name</th><th>Role</th></tr>
+{% for u in users %}<tr><td>{{ u.id }}</td><td>{{ u.username }}</td><td>{{ u.display_name }}</td><td>{{ u.role }}</td></tr>{% endfor %}
+</table></div>
+<h2>Recent audit events</h2>
+<div class="table-wrap"><table><tr><th>Time (UTC)</th><th>Event</th><th>Username</th><th>Source IP</th><th>Method</th><th>Path</th><th>Status</th><th>Detail</th></tr>
+{% for log in logs %}<tr>
+  <td>{{ log.created_at }}</td>
+  <td>{{ log.event }}</td>
+  <td>{{ log.username or '—' }}</td>
+  <td><code>{{ log.remote_addr or '—' }}</code></td>
+  <td><code>{{ log.http_method or '—' }}</code></td>
+  <td>{{ log.path or '—' }}</td>
+  <td>{{ log.status_code if log.status_code is not none else '—' }}</td>
+  <td>{{ log.detail }}</td>
+</tr>{% endfor %}
+</table></div>
+{% endblock %}
